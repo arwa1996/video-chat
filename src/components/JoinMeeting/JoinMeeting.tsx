@@ -7,6 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { firebaseAuth, meetingsRef } from '../../utils/firebaseConfig';
 import { v4 as uuid } from 'uuid';
 import { UserType } from '../../utils/types';
+import { config } from '../../utils/config';
 
 const JoinMeeting = () => {
   const params = useParams();
@@ -37,20 +38,12 @@ const JoinMeeting = () => {
           if (meeting.meetingType === '1-on-1') {
             if (meeting.invitedUsers[0] === user?.uid || isCreator) {
               if (meeting.meetingDate === moment().format('L')) {
-                console.log('Meeting', user?.uid, user?.name, isCreator);
-                console.log('Invites user to meeting', meeting.invitedUsers[0]);
-                console.log('then kindly join the meeting');
                 setIsAllowed(true);
               } else if (
                 moment(meeting.meetingDate).isBefore(moment().format('L'))
               ) {
-                // createToast({ title: 'Meeting has ended.', type: 'danger' });
                 navigate(user ? '/' : '/login');
               } else if (moment(meeting.meetingDate).isAfter()) {
-                // createToast({
-                //   title: `Meeting is on ${meeting.meetingDate}`,
-                //   type: 'warning',
-                // });
                 navigate(user ? '/' : '/login');
               }
             } else navigate(user ? '/' : '/login');
@@ -60,31 +53,13 @@ const JoinMeeting = () => {
             );
             if (index !== -1 || isCreator) {
               if (meeting.meetingDate === moment().format('L')) {
-                console.log(
-                  'video conference Meeting',
-                  user?.uid,
-                  user?.name,
-                  isCreator
-                );
-                console.log('Invites user to meeting', meeting.invitedUsers);
-                console.log('then kindly join the meeting');
                 setIsAllowed(true);
               } else if (
                 moment(meeting.meetingDate).isBefore(moment().format('L'))
               ) {
-                // createToast({ title: 'Meeting has ended.', type: 'danger' });
                 navigate(user ? '/' : '/login');
-              } else if (moment(meeting.meetingDate).isAfter()) {
-                // createToast({
-                //   title: `Meeting is on ${meeting.meetingDate}`,
-                //   type: 'warning',
-                // });
               }
             } else {
-              //   createToast({
-              //     title: `You are not invited to the meeting.`,
-              //     type: 'danger',
-              //   });
               navigate(user ? '/' : '/login');
             }
           } else {
@@ -101,8 +76,8 @@ const JoinMeeting = () => {
   const myMeeting = async (element: any) => {
     // generate token
     const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
-      parseInt(process.env.REACT_APP_ZEGOCLOUD_APP_ID!),
-      process.env.REACT_APP_ZEGOCLOUD_SERVER_SECRET as string,
+      parseInt(config.zegoCloudAppId!),
+      config.zegoCloudServerSecret as string,
       params.id as string,
       user?.uid ? user.uid : uuid(),
       user?.name ? user?.name : (user?.displayName as string)
@@ -123,6 +98,7 @@ const JoinMeeting = () => {
         mode: ZegoUIKitPrebuilt.VideoConference,
       },
     });
+    console.log(zp, user);
   };
 
   return isAllowed ? (

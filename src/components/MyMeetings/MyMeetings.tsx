@@ -21,6 +21,7 @@ import styles from './MyMeetings.module.scss';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { config } from '../../utils/config';
 
 const MyMeetings = () => {
   const [meetings, setMeetings] = useState<Array<MeetingType>>([]);
@@ -51,7 +52,7 @@ const MyMeetings = () => {
   const copyMeeting = (meetingId: string) => {
     return (
       <CopyToClipboard
-        text={`${process.env.REACT_APP_HOST}/join/${meetingId}`}
+        text={`${window.location.origin}/join/${meetingId}`}
         onCopy={() => (
           <IconButton
             color='inherit'
